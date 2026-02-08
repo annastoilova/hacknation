@@ -1,7 +1,7 @@
 'use client';
 
 import { Post } from '@/lib/store';
-import { Linkedin, Instagram, Share2, Edit3, CheckCircle, Trash2 } from 'lucide-react';
+import { Linkedin, Instagram, Share2, Edit3, CheckCircle, Trash2, Sparkles } from 'lucide-react';
 
 interface PostCardProps {
     post: Post;
@@ -60,8 +60,8 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
                     <button
                         onClick={() => onUpdate(post.id, { status: post.status === 'approved' ? 'draft' : 'approved' })}
                         className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all ${post.status === 'approved'
-                                ? 'bg-green-500 text-white'
-                                : 'bg-white/5 text-white hover:bg-white/10 border border-white/10'
+                            ? 'bg-green-500 text-white shadow-lg shadow-green-500/20'
+                            : 'bg-white/5 text-white hover:bg-white/10 border border-white/10'
                             }`}
                     >
                         {post.status === 'approved' ? <CheckCircle className="w-4 h-4" /> : <Edit3 className="w-4 h-4" />}
@@ -76,6 +76,22 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
                         <Trash2 className="w-4 h-4" />
                     </button>
                 </div>
+
+                {/* Agent Thoughts / Critique */}
+                {post.critique && (
+                    <div className="mt-4 p-4 rounded-2xl bg-blue-500/5 border border-blue-500/10 relative overflow-hidden group/thoughts">
+                        <div className="absolute top-0 right-0 p-2 opacity-20">
+                            <Sparkles className="w-8 h-8 text-blue-400" />
+                        </div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <Sparkles className="w-3 h-3 text-blue-400" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400/80">Agent Thoughts</span>
+                        </div>
+                        <p className="text-[11px] leading-relaxed text-gray-400 italic font-medium relative z-10">
+                            "{post.critique}"
+                        </p>
+                    </div>
+                )}
             </div>
 
             <style jsx>{`

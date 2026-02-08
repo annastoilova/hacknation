@@ -1,0 +1,64 @@
+
+> lume@0.1.0 lint
+> eslint
+
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/app/api/analyze/route.ts
+  53:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/app/api/generate/route.ts
+  87:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  96:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/app/dashboard/page.tsx
+  11:29  warning  'brandProfile' is assigned a value but never used                @typescript-eslint/no-unused-vars
+  42:66  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+  42:92  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`  react/no-unescaped-entities
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/components/BrandVault.tsx
+  29:13  error    Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/components/BrandVault.tsx:29:13
+  27 |         const savedBrand = localStorage.getItem('lume_brand');
+  28 |         if (savedBrand) {
+> 29 |             setBrand(JSON.parse(savedBrand));
+     |             ^^^^^^^^ Avoid calling setState() directly within an effect
+  30 |             if (onSave) onSave(JSON.parse(savedBrand));
+  31 |         }
+  32 |     }, []); // Run once on mount  react-hooks/set-state-in-effect
+  32:8   warning  React Hook useEffect has a missing dependency: 'onSave'. Either include it or remove the dependency array. If 'onSave' changes too often, find the parent component that defines it and wrap that definition in useCallback                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    react-hooks/exhaustive-deps
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/components/brand/BrandOnboarding.tsx
+  107:65  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`  react/no-unescaped-entities
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/components/campaign/CampaignForm.tsx
+  6:10  warning  'Layout' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/components/dashboard/PostCard.tsx
+  43:21  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  91:29  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+  91:45  error    `"` can be escaped with `&quot;`, `&ldquo;`, `&#34;`, `&rdquo;`                                                                                                                                                                                                                          react/no-unescaped-entities
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/src/components/create/campaign-planner.tsx
+   5:70  warning  'Target' is defined but never used                    @typescript-eslint/no-unused-vars
+  12:26  warning  'setToneModifier' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/src/components/generation/post-variations.tsx
+   7:8   warning  'clsx' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
+  22:47  warning  Using `<img>` could result in slower LCP and higher bandwidth. Consider using `<Image />` from `next/image` or a custom image loader to automatically optimize images. This may incur additional usage or cost from your provider. See: https://nextjs.org/docs/messages/no-img-element  @next/next/no-img-element
+  22:47  warning  img elements must have an alt prop, either with meaningful text, or an empty string for decorative images                                                                                                                                                                                jsx-a11y/alt-text
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/src/components/onboarding/brand-analyzer.tsx
+  8:8  warning  'clsx' is defined but never used  @typescript-eslint/no-unused-vars
+
+/Users/annastoilova/Desktop/Antigravity/HackNation07Feb/src/lib/generation/post-generator.ts
+  6:41  warning  'idx' is defined but never used  @typescript-eslint/no-unused-vars
+
+✖ 20 problems (9 errors, 11 warnings)
+

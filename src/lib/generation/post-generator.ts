@@ -3,7 +3,7 @@ import { BrandProfile, CampaignIntent, GeneratedPost } from '@/src/types/brand';
 export async function generatePosts(brandProfile: BrandProfile, intent: CampaignIntent): Promise<GeneratedPost[]> {
     await new Promise(resolve => setTimeout(resolve, 3000));
     const variations: GeneratedPost[] = [];
-    intent.platforms.forEach((platform, idx) => {
+    intent.platforms.forEach((platform) => {
         variations.push({
             id: `${platform}-1`,
             platform,

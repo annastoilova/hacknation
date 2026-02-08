@@ -21,6 +21,7 @@ export interface Post {
     imageUrl?: string;
     platform: 'linkedin' | 'instagram';
     status: 'draft' | 'approved' | 'rejected' | 'scheduled';
+    critique?: string;
 }
 
 interface AppState {

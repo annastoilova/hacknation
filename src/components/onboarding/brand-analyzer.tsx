@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Globe, ArrowRight, Check, Loader2 } from 'lucide-react';
 import { analyzeBrand } from '@/src/lib/brand-analysis-agent';
 import { BrandProfile } from '@/src/types/brand';
-import clsx from 'clsx';
 
 export default function BrandAnalyzer({ onComplete }: { onComplete: (profile: BrandProfile) => void }) {
     const [step, setStep] = useState<'input' | 'analyzing' | 'result'>('input');
