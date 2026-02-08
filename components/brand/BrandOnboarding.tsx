@@ -28,12 +28,38 @@ export default function BrandOnboarding() {
             normalizedWebsite = `https://${normalizedWebsite}`;
         }
 
-        // Simulate AI analyzing the brand website (mock delay)
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        try {
+            const response = await fetch('/api/analyze', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    website: normalizedWebsite,
+                    name: formData.name,
+                    tone: formData.tone,
+                }),
+            });
 
-        setBrandProfile({ ...formData, website: normalizedWebsite });
-        setIsLoading(false);
-        router.push('/create'); // Navigate to campaign creation
+            if (!response.ok) throw new Error('Analysis failed');
+
+            const data = await response.json();
+
+            setBrandProfile({
+                ...formData,
+                name: data.name || formData.name,
+                website: normalizedWebsite,
+                tone: data.refinedTone || formData.tone,
+                colors: data.colors || formData.colors,
+            });
+
+            setIsLoading(false);
+            router.push('/create'); // Navigate to campaign creation
+        } catch (error) {
+            console.error('Error during analysis:', error);
+            setIsLoading(false);
+            // Fallback to local data if API fails
+            setBrandProfile({ ...formData, website: normalizedWebsite });
+            router.push('/create');
+        }
     };
 
     return (

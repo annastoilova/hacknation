@@ -29,36 +29,39 @@ export default function CampaignForm() {
 
         setCurrentCampaign(campaign);
 
-        // Mock AI Generation Logic
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        try {
+            const response = await fetch('/api/generate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    intent,
+                    platform,
+                    brandProfile,
+                }),
+            });
 
-        const mockPosts: Post[] = [
-            {
-                id: '1',
-                platform: 'linkedin',
-                status: 'draft',
-                content: `🚀 Big news from ${brandProfile?.name || 'our team'}! We're thrilled to announce our latest milestone in sync with Hack-Nation. ${intent}. #Innovation #Tech`,
-                imageUrl: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80',
-            },
-            {
-                id: '2',
-                platform: 'instagram',
-                status: 'draft',
-                content: `Leveling up! ✨ ${intent}. Stay tuned for more updates from ${brandProfile?.name || 'us'}. 🎯 #Lume #SocialMedia`,
-                imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80',
-            },
-            {
-                id: '3',
-                platform: 'linkedin',
-                status: 'draft',
-                content: `Reflecting on our journey at ${brandProfile?.name || 'the company'}. ${intent}. Proud of what we've built.`,
-                imageUrl: 'https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=800&q=80',
-            }
-        ];
+            if (!response.ok) throw new Error('Generation failed');
 
-        setGeneratedPosts(mockPosts);
-        setIsGenerating(false);
-        router.push('/dashboard');
+            const data = await response.json();
+            setGeneratedPosts(data.posts);
+            setIsGenerating(false);
+            router.push('/dashboard');
+        } catch (error) {
+            console.error('Error during generation:', error);
+            setIsGenerating(false);
+            // Fallback to generic mock if API fails
+            const fallbackPosts: Post[] = [
+                {
+                    id: 'fallback-1',
+                    platform: 'linkedin',
+                    status: 'draft',
+                    content: `🚀 Milestone update for ${brandProfile?.name || 'our brand'}! ${intent}. #Lume #Success`,
+                    imageUrl: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80',
+                }
+            ];
+            setGeneratedPosts(fallbackPosts);
+            router.push('/dashboard');
+        }
     };
 
     return (
