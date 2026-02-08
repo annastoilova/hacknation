@@ -1,7 +1,7 @@
-# Project Brief: BrandSync AI - AI Social Media Agent
+# Project Brief: Lume - AI Social Media Agent
 
 ## 1. Executive Summary
-**BrandSync AI** is an AI-powered social media companion designed to automate the creation of on-brand content for marketing teams, particularly for high-stakes events like hackathons, the Super Bowl, or the Olympics. It acts as a "junior social media manager + designer," generating post variations that align with a company's brand voice and visual identity while allowing for human oversight.
+**Lume** is an AI-powered social media companion designed to automate the creation of on-brand content for marketing teams, particularly for high-stakes events like hackathons, the Super Bowl, or the Olympics. It acts as a "junior social media manager + designer," generating post variations that align with a company's brand voice and visual identity while allowing for human oversight.
 
 ## 2. Core Objectives
 -   **Automate Creation:** Generate high-quality LinkedIn and Instagram posts from simple intents.

@@ -32,10 +32,10 @@ export default function Home() {
         <header className="flex items-center justify-between mb-12">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => setView('onboarding')}>
             <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center font-bold text-white">
-              B
+              L
             </div>
             <span className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
-              BrandSync AI
+              Lume
             </span>
           </div>
           {profile && (

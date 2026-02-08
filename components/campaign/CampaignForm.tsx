@@ -44,7 +44,7 @@ export default function CampaignForm() {
                 id: '2',
                 platform: 'instagram',
                 status: 'draft',
-                content: `Leveling up! ✨ ${intent}. Stay tuned for more updates from ${brandProfile?.name || 'us'}. 🎯 #BrandSync #SocialMedia`,
+                content: `Leveling up! ✨ ${intent}. Stay tuned for more updates from ${brandProfile?.name || 'us'}. 🎯 #Lume #SocialMedia`,
                 imageUrl: 'https://images.unsplash.com/photo-1522202176988-66273c2fd55f?auto=format&fit=crop&w=800&q=80',
             },
             {
@@ -105,8 +105,8 @@ export default function CampaignForm() {
                                         type="button"
                                         onClick={() => setPlatform(p)}
                                         className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium capitalize transition-all ${platform === p
-                                                ? 'bg-blue-600 text-white shadow-lg'
-                                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                            ? 'bg-blue-600 text-white shadow-lg'
+                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
                                             }`}
                                     >
                                         {p}

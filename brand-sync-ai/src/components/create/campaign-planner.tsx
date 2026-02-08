@@ -42,7 +42,7 @@ export default function CampaignPlanner({ brandProfile, onGenerate }: CampaignPl
         >
             <div className="text-center space-y-2">
                 <h2 className="text-3xl font-bold text-white">Campaign Architect</h2>
-                <p className="text-gray-400">Describe what you want to achieve, and BrandSync will plan the content.</p>
+                <p className="text-gray-400">Describe what you want to achieve, and Lume will plan the content.</p>
             </div>
 
             <div className="bg-gray-900/50 border border-gray-800 rounded-2xl p-6 space-y-6 backdrop-blur-md">
