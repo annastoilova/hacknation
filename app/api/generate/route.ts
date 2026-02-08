@@ -1,5 +1,7 @@
 import { OpenAI } from 'openai';
 import { NextResponse } from 'next/server';
+import { generateImage } from 'ai';
+import { google } from '@ai-sdk/google';
 
 const openai = new OpenAI({
     apiKey: process.env.OPENAI_API_KEY || '',
@@ -96,24 +98,26 @@ export async function POST(req: Request) {
 
         const finalResult = JSON.parse(reviewResponse.choices[0].message.content || '{"refinedPosts":[]}');
 
-        // --- STEP 3: IMAGE GENERATION ---
+        // --- STEP 3: IMAGE GENERATION (GEMINI / IMAGEN 3) ---
         const postsWithIds = await Promise.all(finalResult.refinedPosts.map(async (post: any) => {
             let imageUrl = `https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80`;
 
-            try {
-                const imageResponse = await openai.images.generate({
-                    model: "dall-e-3",
-                    prompt: `${post.imagePrompt}. Professional social media style, high quality, clean composition.`,
-                    n: 1,
-                    size: "1024x1024",
-                });
+            if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+                try {
+                    console.log(`[DEBUG] Generating Gemini image for prompt: ${post.imagePrompt}`);
+                    const { image } = await generateImage({
+                        model: google.image('imagen-3.0-generate-001'),
+                        prompt: `${post.imagePrompt}. Professional social media style, high quality, clean composition, brand-aligned colors: ${brandProfile?.colors?.join(', ') || 'modern'}.`,
+                    });
 
-                const generatedUrl = imageResponse.data?.[0]?.url;
-                if (generatedUrl) {
-                    imageUrl = generatedUrl;
+                    if (image.base64) {
+                        imageUrl = `data:image/png;base64,${image.base64}`;
+                    }
+                } catch (err: any) {
+                    console.error("[DEBUG] Gemini Image Gen Error:", err.message || err);
                 }
-            } catch (err) {
-                console.error("Image Gen Error:", err);
+            } else {
+                console.warn("[DEBUG] Google API Key missing, falling back to placeholder.");
             }
 
             return {
