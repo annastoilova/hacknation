@@ -21,3 +21,21 @@ export type BrandAnalysisInput = {
     files?: File[];
     description?: string;
 };
+
+export interface CampaignIntent {
+    topic: string;
+    platforms: ('linkedin' | 'instagram')[];
+    toneModifier: string; // e.g., "More professional", "Very excited"
+    goals: string[];
+}
+
+export interface GeneratedPost {
+    id: string;
+    platform: 'linkedin' | 'instagram';
+    caption: string;
+    imageUrl?: string;
+    status: 'draft' | 'critiquing' | 'refining' | 'ready';
+    feedback?: string;
+}
+
+
