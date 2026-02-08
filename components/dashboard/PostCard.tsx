@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Post } from '@/lib/store';
-import { Linkedin, Instagram, Share2, Edit3, CheckCircle, Trash2, Sparkles, Calendar, Save, X } from 'lucide-react';
+import { Post, useStore } from '@/lib/store';
+import { Linkedin, Instagram, Share2, Edit3, CheckCircle, Trash2, Sparkles, Calendar, Save, X, Wand2, Loader2 } from 'lucide-react';
 
 interface PostCardProps {
     post: Post;
@@ -11,7 +11,10 @@ interface PostCardProps {
 
 export default function PostCard({ post, onUpdate }: PostCardProps) {
     const [isEditing, setIsEditing] = useState(false);
+    const [isTweaking, setIsTweaking] = useState(false);
+    const [tweakPrompt, setTweakPrompt] = useState('');
     const [editContent, setEditContent] = useState(post.content);
+    const [isApplyingTweak, setIsApplyingTweak] = useState(false);
     const isLinkedIn = post.platform === 'linkedin';
 
     const handleSave = () => {
@@ -22,6 +25,34 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
     const handleCancel = () => {
         setEditContent(post.content);
         setIsEditing(false);
+    };
+
+    const handleTweak = async () => {
+        if (!tweakPrompt.trim()) return;
+        setIsApplyingTweak(true);
+
+        try {
+            const response = await fetch('/api/tweak', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    post,
+                    prompt: tweakPrompt,
+                    brandProfile: useStore.getState().brandProfile
+                }),
+            });
+
+            const data = await response.json();
+            if (data.post) {
+                onUpdate(post.id, data.post);
+                setIsTweaking(false);
+                setTweakPrompt('');
+            }
+        } catch (err) {
+            console.error("Tweak error:", err);
+        } finally {
+            setIsApplyingTweak(false);
+        }
     };
 
     return (
@@ -136,7 +167,46 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
                                 >
                                     <Edit3 className="w-4 h-4" />
                                 </button>
+                                <button
+                                    onClick={() => setIsTweaking(true)}
+                                    className="p-2.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 transition-all"
+                                    title="Tweak with AI"
+                                >
+                                    <Wand2 className="w-4 h-4" />
+                                </button>
                             </div>
+
+                            {/* Tweak with AI Input */}
+                            {isTweaking && (
+                                <div className="mt-4 p-4 rounded-2xl bg-white/5 border border-white/10 animate-in fade-in slide-in-from-top-2 duration-300">
+                                    <p className="text-[10px] font-black uppercase tracking-widest text-blue-400 mb-2 flex items-center gap-1.5">
+                                        <Wand2 className="w-3 h-3" /> Tweak Prompt
+                                    </p>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. 'Make it more playful' or 'Add a city skyline'"
+                                        className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-500/50 mb-3"
+                                        value={tweakPrompt}
+                                        onChange={(e) => setTweakPrompt(e.target.value)}
+                                        onKeyDown={(e) => e.key === 'Enter' && handleTweak()}
+                                    />
+                                    <div className="flex gap-2">
+                                        <button
+                                            onClick={handleTweak}
+                                            disabled={isApplyingTweak}
+                                            className="flex-1 flex items-center justify-center gap-2 py-2 bg-blue-600 hover:bg-blue-500 disabled:opacity-50 text-white rounded-xl text-[10px] font-bold transition-all shadow-lg"
+                                        >
+                                            {isApplyingTweak ? <Loader2 className="w-3 h-3 animate-spin" /> : 'Apply Tweak'}
+                                        </button>
+                                        <button
+                                            onClick={() => { setIsTweaking(false); setTweakPrompt(''); }}
+                                            className="px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-400 rounded-xl text-[10px] items-center"
+                                        >
+                                            <X className="w-3 h-3" />
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
 
                             <div className="flex items-center gap-2">
                                 <div className="flex-1 relative">

@@ -13,6 +13,7 @@ export default function CampaignForm() {
 
     const [intent, setIntent] = useState('');
     const [platform, setPlatform] = useState<'linkedin' | 'instagram' | 'both'>('both');
+    const [contentType, setContentType] = useState<'image' | 'video'>('image');
     const [isGenerating, setIsGenerating] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
@@ -24,6 +25,7 @@ export default function CampaignForm() {
         const campaign: Campaign = {
             intent,
             platform,
+            contentType,
             date: new Date(),
         };
 
@@ -36,6 +38,7 @@ export default function CampaignForm() {
                 body: JSON.stringify({
                     intent,
                     platform,
+                    contentType,
                     brandProfile,
                 }),
             });
@@ -113,6 +116,26 @@ export default function CampaignForm() {
                                             }`}
                                     >
                                         {p}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        <div className="space-y-3">
+                            <label className="text-sm font-medium text-gray-300 ml-1">Content Type</label>
+                            <div className="flex p-1 bg-black/40 border border-white/10 rounded-xl">
+                                {(['image', 'video'] as const).map((t) => (
+                                    <button
+                                        key={t}
+                                        type="button"
+                                        onClick={() => setContentType(t)}
+                                        className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium capitalize transition-all flex items-center justify-center gap-2 ${contentType === t
+                                            ? 'bg-blue-600 text-white shadow-lg'
+                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                            }`}
+                                    >
+                                        {t === 'image' ? <Layout className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}
+                                        {t}
                                     </button>
                                 ))}
                             </div>

@@ -9,7 +9,7 @@ const openai = new OpenAI({
 
 export async function POST(req: Request) {
     try {
-        const { intent, platform, brandProfile } = await req.json();
+        const { intent, platform, contentType, brandProfile } = await req.json();
 
         if (!process.env.OPENAI_API_KEY) {
             // Mock response if API key is missing
@@ -20,8 +20,11 @@ export async function POST(req: Request) {
                 id: Math.random().toString(36).substr(2, 9),
                 platform: p,
                 status: 'draft',
+                contentType: contentType || 'image',
                 content: `🚀 Milestone update for ${brandProfile?.name || 'our brand'}! ${intent}. #Innovation #${brandProfile?.name || 'Success'}`,
-                imageUrl: `https://images.unsplash.com/photo-${1500000000000 + i}?auto=format&fit=crop&w=800&q=80`
+                imageUrl: contentType === 'video'
+                    ? `https://images.unsplash.com/photo-1492691523567-6170c3295db5?auto=format&fit=crop&w=800&q=80`
+                    : `https://images.unsplash.com/photo-${1500000000000 + i}?auto=format&fit=crop&w=800&q=80`
             }));
 
             return NextResponse.json({ posts: mockPosts });
@@ -34,6 +37,7 @@ export async function POST(req: Request) {
             Campaign Intent: ${intent}
             Brand Tone: ${brandProfile?.tone}
             Platforms: ${platform === 'both' ? 'LinkedIn and Instagram' : platform}
+            Content Type: ${contentType || 'image'}
 
             Platform Guidelines:
             - LinkedIn: Professional, industry-leading tone. Start with a strong 'hook' line. Use paragraph breaks for readability. 

@@ -1,0 +1,77 @@
+import { OpenAI } from 'openai';
+import { NextResponse } from 'next/server';
+import { generateImage } from 'ai';
+import { google } from '@ai-sdk/google';
+
+const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY || '',
+});
+
+export async function POST(req: Request) {
+    try {
+        const { post, prompt, brandProfile } = await req.json();
+
+        if (!process.env.OPENAI_API_KEY) {
+            return NextResponse.json({ error: "Missing API Key" }, { status: 400 });
+        }
+
+        const tweakPrompt = `
+            Act as a Senior Social Media Strategist for ${brandProfile?.name}.
+            
+            Current Post:
+            Content: ${post.content}
+            Platform: ${post.platform}
+            Current Image Prompt: ${post.imagePrompt}
+
+            User Request: "${prompt}"
+
+            Apply this request to the post while maintaining the brand's tone (${brandProfile?.tone}).
+            Refine both the caption and the imagePrompt to match the request.
+
+            Respond in JSON:
+            {
+                "content": "refined caption",
+                "imagePrompt": "refined visual description",
+                "critique": "What was changed and why",
+                "score": 98
+            }
+        `;
+
+        const response = await openai.chat.completions.create({
+            model: "gpt-4-turbo-preview",
+            messages: [{ role: "user", content: tweakPrompt }],
+            response_format: { type: "json_object" },
+        });
+
+        const refinedData = JSON.parse(response.choices[0].message.content || '{}');
+
+        // Regenerate image if the prompt suggests a visual change
+        let imageUrl = post.imageUrl;
+        if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+            try {
+                const { image } = await generateImage({
+                    model: google.image('imagen-3.0-generate-001'),
+                    prompt: `${refinedData.imagePrompt}. Professional social media style, high quality, clean composition, brand-aligned colors: ${brandProfile?.colors?.join(', ') || 'modern'}.`,
+                });
+
+                if (image.base64) {
+                    imageUrl = `data:image/png;base64,${image.base64}`;
+                }
+            } catch (err: any) {
+                console.error("[TWEAK] Gemini Image Gen Error:", err);
+            }
+        }
+
+        return NextResponse.json({
+            post: {
+                ...post,
+                ...refinedData,
+                imageUrl
+            }
+        });
+
+    } catch (error: any) {
+        console.error("Tweak API Error:", error);
+        return NextResponse.json({ error: "Failed to tweak post" }, { status: 500 });
+    }
+}

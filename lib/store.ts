@@ -13,6 +13,7 @@ export interface Campaign {
     platform: 'linkedin' | 'instagram' | 'both';
     date?: Date;
     constraints?: string;
+    contentType: 'image' | 'video';
 }
 
 export interface Post {
@@ -23,6 +24,7 @@ export interface Post {
     status: 'draft' | 'approved' | 'rejected' | 'scheduled';
     critique?: string;
     score?: number;
+    contentType: 'image' | 'video';
 }
 
 interface AppState {
