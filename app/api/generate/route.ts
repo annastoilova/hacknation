@@ -26,17 +26,21 @@ export async function POST(req: Request) {
         }
 
         const generatorPrompt = `
-            Act as a social media strategist. Generate one post variation for each specified platform.
+            Act as a social media strategist for ${brandProfile?.name}. 
+            Generate one high-performance post variation for each specified platform.
             
-            Brand: ${brandProfile?.name}
-            Brand Tone: ${brandProfile?.tone}
             Campaign Intent: ${intent}
+            Brand Tone: ${brandProfile?.tone}
             Platforms: ${platform === 'both' ? 'LinkedIn and Instagram' : platform}
 
-            Focus on high-engagement drafts. Respond in JSON:
+            Platform Guidelines:
+            - LinkedIn: Professional, industry-leading tone. Start with a strong 'hook' line. Use paragraph breaks for readability. 
+            - Instagram: Visual-first, energetic tone. Use relevant emojis. Include 3-5 high-traffic hashtags at the end.
+
+            Respond in JSON:
             {
                 "posts": [
-                    { "platform": "linkedin", "content": "draft text" }
+                    { "platform": "linkedin", "content": "Full caption here" }
                 ]
             }
         `;
@@ -60,9 +64,10 @@ export async function POST(req: Request) {
             ${JSON.stringify(initialResult.posts)}
 
             For each post:
-            1. Critique it (what's good, what's weak).
+            1. Critique it.
             2. Provide a refined version.
-            3. Keep the "critique" concise (1-2 sentences) about the reasoning.
+            3. Provide a detailed DALL-E 3 image prompt (1 sentence) that matches the post's message and the brand's aesthetic.
+            4. Keep the "critique" concise.
 
             Return JSON format:
             {
@@ -70,7 +75,8 @@ export async function POST(req: Request) {
                     {
                         "platform": "platform_name",
                         "content": "refined content",
-                        "critique": "Agent reasoning here"
+                        "critique": "Agent reasoning here",
+                        "imagePrompt": "Detailed visual description"
                     }
                 ]
             }
@@ -84,11 +90,32 @@ export async function POST(req: Request) {
 
         const finalResult = JSON.parse(reviewResponse.choices[0].message.content || '{"refinedPosts":[]}');
 
-        const postsWithIds = finalResult.refinedPosts.map((post: any) => ({
-            ...post,
-            id: Math.random().toString(36).substr(2, 9),
-            status: 'draft',
-            imageUrl: `https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80`
+        // --- STEP 3: IMAGE GENERATION ---
+        const postsWithIds = await Promise.all(finalResult.refinedPosts.map(async (post: any) => {
+            let imageUrl = `https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80`;
+
+            try {
+                const imageResponse = await openai.images.generate({
+                    model: "dall-e-3",
+                    prompt: `${post.imagePrompt}. Professional social media style, high quality, clean composition.`,
+                    n: 1,
+                    size: "1024x1024",
+                });
+
+                const generatedUrl = imageResponse.data?.[0]?.url;
+                if (generatedUrl) {
+                    imageUrl = generatedUrl;
+                }
+            } catch (err) {
+                console.error("Image Gen Error:", err);
+            }
+
+            return {
+                ...post,
+                id: Math.random().toString(36).substr(2, 9),
+                status: 'draft',
+                imageUrl
+            };
         }));
 
         return NextResponse.json({ posts: postsWithIds });
