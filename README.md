@@ -1,3 +1,7 @@
+# Lume
+
+Lume is a brand-aware AI agent designed to bridge the gap between generative speed and brand consistency. By inferring your brand’s unique DNA from existing assets, LumeSocial automates the creation, auditing, and scheduling of platform-native content through intelligent self-feedback loops. It doesn’t just generate posts—it thinks like a senior creative director, ensuring every visual and caption is on-brand, on-trend, and ready to shine.
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
@@ -5,6 +9,8 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 First, run the development server:
 
 ```bash
+npm install
+
 npm run dev
 # or
 yarn dev
