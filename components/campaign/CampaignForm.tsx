@@ -58,6 +58,7 @@ export default function CampaignForm() {
                     id: 'fallback-1',
                     platform: 'linkedin',
                     status: 'draft',
+                    contentType: 'image',
                     content: `🚀 Milestone update for ${brandProfile?.name || 'our brand'}! ${intent}. #Lume #Success`,
                     imageUrl: 'https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&w=800&q=80',
                 }

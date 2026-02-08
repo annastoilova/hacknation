@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Post, useStore } from '@/lib/store';
-import { Linkedin, Instagram, Share2, Edit3, CheckCircle, Trash2, Sparkles, Calendar, Save, X, Wand2, Loader2 } from 'lucide-react';
+import { Linkedin, Instagram, Share2, Edit3, CheckCircle, Trash2, Sparkles, Calendar, Save, X, Wand2, Loader2, Play } from 'lucide-react';
 
 interface PostCardProps {
     post: Post;
@@ -69,9 +69,14 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
                             <Instagram className="w-4 h-4 text-pink-400" />
                         </div>
                     )}
-                    <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
-                        {post.platform}
-                    </span>
+                    <div className="flex flex-col">
+                        <span className="text-xs font-bold uppercase tracking-widest text-gray-400">
+                            {post.platform}
+                        </span>
+                        {post.contentType === 'video' && (
+                            <span className="text-[8px] font-black uppercase text-blue-400 tracking-tighter">Video Post</span>
+                        )}
+                    </div>
                 </div>
                 <div className="flex items-center gap-2">
                     <span className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-tighter ${post.status === 'draft' ? 'bg-yellow-500/20 text-yellow-400' : post.status === 'scheduled' ? 'bg-blue-500/20 text-blue-400' : 'bg-green-500/20 text-green-400'
@@ -89,7 +94,13 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
                         alt="Generation preview"
                         className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                        {post.contentType === 'video' && (
+                            <div className="p-4 bg-white/10 backdrop-blur-md rounded-full border border-white/20 transform scale-90 group-hover:scale-100 transition-transform">
+                                <Play className="w-8 h-8 text-white fill-white" />
+                            </div>
+                        )}
+                    </div>
                 </div>
             )}
 

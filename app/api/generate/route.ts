@@ -71,13 +71,13 @@ export async function POST(req: Request) {
 
             Audit Rules:
             1. Brand Consistency: Does it sound like the specified tone?
-            2. Visual Correctness: Does the imagePrompt create a scene that builds on the text?
+            2. Visual Correctness: Does the imagePrompt (or videoPrompt) create a scene that builds on the text?
             3. Engagement: Is the hook strong enough?
 
             For each post, return:
             - A refined version of the content.
-            - A refined imagePrompt (Visual Self-Correction).
-            - A detailed critique (Agent Thoughts).
+            - A refined visual prompt (imagePrompt or videoPrompt).
+            - A detailed critique (Audit findings and reasoning).
             - A brandMatchScore (0-100).
 
             Return JSON format:
@@ -86,7 +86,7 @@ export async function POST(req: Request) {
                     {
                         "platform": "platform_name",
                         "content": "refined caption",
-                        "imagePrompt": "audited visual description",
+                        "imagePrompt": "audited visual description (if video, describe a 5-second cinematic clip)",
                         "critique": "Audit findings and reasoning",
                         "score": 95
                     }
@@ -102,23 +102,29 @@ export async function POST(req: Request) {
 
         const finalResult = JSON.parse(reviewResponse.choices[0].message.content || '{"refinedPosts":[]}');
 
-        // --- STEP 3: IMAGE GENERATION (GEMINI / IMAGEN 3) ---
+        // --- STEP 3: IMAGE/VIDEO GENERATION (GEMINI / IMAGEN 3) ---
         const postsWithIds = await Promise.all(finalResult.refinedPosts.map(async (post: any) => {
             let imageUrl = `https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80`;
 
             if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
                 try {
-                    console.log(`[DEBUG] Generating Gemini image for prompt: ${post.imagePrompt}`);
+                    const isVideo = contentType === 'video';
+                    const visualPrompt = isVideo
+                        ? `${post.imagePrompt}. Cinematic 4k video style, high motion, dynamic lighting.`
+                        : `${post.imagePrompt}. Professional social media style, high quality, clean composition.`;
+
+                    console.log(`[DEBUG] Generating Gemini ${isVideo ? 'video frame' : 'image'} for prompt: ${visualPrompt}`);
+
                     const { image } = await generateImage({
                         model: google.image('imagen-3.0-generate-001'),
-                        prompt: `${post.imagePrompt}. Professional social media style, high quality, clean composition, brand-aligned colors: ${brandProfile?.colors?.join(', ') || 'modern'}.`,
+                        prompt: `${visualPrompt} brand-aligned colors: ${brandProfile?.colors?.join(', ') || 'modern'}.`,
                     });
 
                     if (image.base64) {
                         imageUrl = `data:image/png;base64,${image.base64}`;
                     }
                 } catch (err: any) {
-                    console.error("[DEBUG] Gemini Image Gen Error:", err.message || err);
+                    console.error("[DEBUG] Gemini Visual Gen Error:", err.message || err);
                 }
             } else {
                 console.warn("[DEBUG] Google API Key missing, falling back to placeholder.");
@@ -128,6 +134,7 @@ export async function POST(req: Request) {
                 ...post,
                 id: Math.random().toString(36).substr(2, 9),
                 status: 'draft',
+                contentType: contentType || 'image',
                 imageUrl
             };
         }));
