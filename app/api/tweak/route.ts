@@ -47,7 +47,9 @@ export async function POST(req: Request) {
 
         // Regenerate image if the prompt suggests a visual change
         let imageUrl = post.imageUrl;
-        if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+        const googleKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GOOGLE_API_KEY;
+
+        if (googleKey) {
             try {
                 const isVideo = post.contentType === 'video';
                 const visualPrompt = isVideo
@@ -65,7 +67,12 @@ export async function POST(req: Request) {
                     imageUrl = `data:image/png;base64,${image.base64}`;
                 }
             } catch (err: any) {
-                console.error("[TWEAK] Gemini Visual Gen Error:", err);
+                console.error("[TWEAK] Gemini Visual Gen Error:", err.message || err);
+            }
+        } else {
+            // If key is missing, add a random sig to the existing image URL to force a 'tweak' feel if it was a placeholder
+            if (imageUrl.includes('unsplash.com')) {
+                imageUrl = `${imageUrl.split('&sig=')[0]}&sig=${Math.random()}`;
             }
         }
 

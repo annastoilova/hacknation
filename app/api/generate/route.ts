@@ -104,9 +104,12 @@ export async function POST(req: Request) {
 
         // --- STEP 3: IMAGE/VIDEO GENERATION (GEMINI / IMAGEN 3) ---
         const postsWithIds = await Promise.all(finalResult.refinedPosts.map(async (post: any) => {
-            let imageUrl = `https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80`;
+            const seed = Math.floor(Math.random() * 1000000);
+            let imageUrl = `https://images.unsplash.com/photo-1611162617474-5b21e879e113?auto=format&fit=crop&w=800&q=80&sig=${seed}`;
 
-            if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
+            const googleKey = process.env.GOOGLE_GENERATIVE_AI_API_KEY || process.env.GOOGLE_API_KEY;
+
+            if (googleKey) {
                 try {
                     const isVideo = contentType === 'video';
                     const visualPrompt = isVideo
@@ -127,7 +130,7 @@ export async function POST(req: Request) {
                     console.error("[DEBUG] Gemini Visual Gen Error:", err.message || err);
                 }
             } else {
-                console.warn("[DEBUG] Google API Key missing, falling back to placeholder.");
+                console.warn("[DEBUG] Google API Key missing, falling back to dynamic placeholder.");
             }
 
             return {
