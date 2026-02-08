@@ -56,7 +56,7 @@ export async function POST(req: Request) {
                     ? `${refinedData.imagePrompt}. Cinematic 4k video style, high motion, dynamic lighting.`
                     : `${refinedData.imagePrompt}. Professional social media style, high quality, clean composition.`;
 
-                console.log(`[TWEAK] Generating Gemini ${isVideo ? 'video frame' : 'image'} for prompt: ${visualPrompt}`);
+                console.log(`[TWEAK] Attempting Gemini Generation: ${visualPrompt}`);
 
                 const { image } = await generateImage({
                     model: google.image('imagen-3.0-generate-001'),
@@ -67,12 +67,42 @@ export async function POST(req: Request) {
                     imageUrl = `data:image/png;base64,${image.base64}`;
                 }
             } catch (err: any) {
-                console.error("[TWEAK] Gemini Visual Gen Error:", err.message || err);
+                console.error("[TWEAK] Gemini Failed, Falling back to DALL-E 3:", err.message || err);
+
+                // FALLBACK TO DALL-E 3
+                try {
+                    const dallEResponse = await openai.images.generate({
+                        model: "dall-e-3",
+                        prompt: `${refinedData.imagePrompt}. Brand style: ${brandProfile?.tone}, Colors: ${brandProfile?.colors?.join(', ')}.`,
+                        n: 1,
+                        size: "1024x1024",
+                    });
+                    if (dallEResponse.data?.[0]?.url) {
+                        imageUrl = dallEResponse.data[0].url;
+                    }
+                } catch (dalleErr: any) {
+                    console.error("[TWEAK] DALL-E 3 Fallback Failed:", dalleErr.message);
+                }
             }
         } else {
             // If key is missing, add a random sig to the existing image URL to force a 'tweak' feel if it was a placeholder
             if (imageUrl.includes('unsplash.com')) {
                 imageUrl = `${imageUrl.split('&sig=')[0]}&sig=${Math.random()}`;
+            } else {
+                // Or just fallback to DALL-E 3 directly
+                try {
+                    const dallEResponse = await openai.images.generate({
+                        model: "dall-e-3",
+                        prompt: refinedData.imagePrompt,
+                        n: 1,
+                        size: "1024x1024",
+                    });
+                    if (dallEResponse.data?.[0]?.url) {
+                        imageUrl = dallEResponse.data[0].url;
+                    }
+                } catch (err) {
+                    console.warn("[TWEAK] DALL-E 3 fallback failed.");
+                }
             }
         }
 

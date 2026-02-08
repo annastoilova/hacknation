@@ -2,10 +2,11 @@
 
 import { useStore } from '@/lib/store';
 import PostCard from '@/components/dashboard/PostCard';
-import { ArrowLeft, Sparkles, Wand2, LayoutDashboard } from 'lucide-react';
+import { ArrowLeft, Sparkles, Wand2, LayoutDashboard, Linkedin, Instagram, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-
+import confetti from 'canvas-confetti';
+Riverside,
 export default function Dashboard() {
     const router = useRouter();
     const { generatedPosts, brandProfile, currentCampaign, updatePost } = useStore();
@@ -30,44 +31,80 @@ export default function Dashboard() {
 
     return (
         <main className="min-h-screen bg-[#050505] text-white p-6 md:p-12">
-            {/* Nav Header */}
-            <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
-                <div className="space-y-1">
-                    <div className="flex items-center gap-2 text-blue-400 mb-2">
-                        <LayoutDashboard className="w-4 h-4" />
-                        <span className="text-xs font-black uppercase tracking-[0.2em]">Studio Workspace</span>
+            {/* Campaign Metrics & Actions */}
+            <div className="max-w-7xl mx-auto mb-12 grid grid-cols-1 md:grid-cols-4 gap-4 animate-in fade-in slide-in-from-top-4 duration-700">
+                <div className="md:col-span-3 flex flex-wrap items-center gap-4">
+                    <div className="px-6 py-4 rounded-3xl bg-white/[0.03] border border-white/10 flex flex-col gap-1 min-w-[140px]">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Readiness Score</span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-2xl font-black text-blue-400">
+                                {generatedPosts.length > 0 ? Math.round(generatedPosts.reduce((acc, p) => acc + (p.score || 0), 0) / generatedPosts.length) : 0}%
+                            </span>
+                            <div className="h-1.5 w-12 bg-white/5 rounded-full overflow-hidden">
+                                <div
+                                    className="h-full bg-blue-500 rounded-full transition-all duration-1000"
+                                    style={{ width: `${generatedPosts.length > 0 ? Math.round(generatedPosts.reduce((acc, p) => acc + (p.score || 0), 0) / generatedPosts.length) : 0}%` }}
+                                />
+                            </div>
+                        </div>
                     </div>
-                    <h1 className="text-4xl font-black tracking-tighter">Content Studio</h1>
-                    <p className="text-gray-400 font-medium">
-                        Refining <span className="text-gray-200">"{currentCampaign?.intent}"</span>
-                    </p>
+                    <div className="px-6 py-4 rounded-3xl bg-white/[0.03] border border-white/10 flex flex-col gap-1 min-w-[140px]">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Approvals</span>
+                        <span className="text-2xl font-black text-green-400">
+                            {generatedPosts.filter(p => p.status === 'approved').length}/{generatedPosts.length}
+                        </span>
+                    </div>
+                    <div className="px-6 py-4 rounded-3xl bg-white/[0.03] border border-white/10 flex flex-col gap-1 min-w-[140px]">
+                        <span className="text-[10px] font-black uppercase tracking-widest text-gray-500">Channels</span>
+                        <div className="flex items-center gap-2 mt-1">
+                            <div className="p-1.5 bg-blue-600/20 rounded-lg"><Linkedin className="w-3 h-3 text-blue-400" /></div>
+                            <div className="p-1.5 bg-pink-600/20 rounded-lg"><Instagram className="w-3 h-3 text-pink-400" /></div>
+                        </div>
+                    </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                    <button
-                        onClick={() => router.push('/create')}
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-sm font-bold"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Adjust Intent
-                    </button>
+                <div className="flex items-end justify-end gap-3">
                     <button
                         onClick={() => {
+                            generatedPosts.forEach(post => {
+                                if (post.status === 'draft' && (post.score || 0) >= 85) {
+                                    updatePost(post.id, { status: 'approved' });
+                                }
+                            });
+                        }}
+                        className="group flex items-center gap-3 px-6 py-4 rounded-3xl bg-white/5 border border-white/10 hover:border-green-500/30 hover:bg-green-500/5 transition-all text-sm font-bold"
+                    >
+                        <div className="p-2 bg-green-500/10 rounded-xl group-hover:scale-110 transition-transform">
+                            <CheckCircle className="w-4 h-4 text-green-400" />
+                        </div>
+                        <div className="flex flex-col items-start pr-2 text-left">
+                            <span className="text-green-400">Bulk Approve</span>
+                            <span className="text-[10px] text-gray-500 font-medium">Auto-approve (85+)</span>
+                        </div>
+                    </button>
+
+                    <button
+                        onClick={async () => {
                             const btn = document.getElementById('publish-btn');
-                            if (btn) {
-                                btn.innerHTML = '<div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> Publishing...';
+                            if (btn && !btn.innerText.includes('Live')) {
+                                btn.innerHTML = '<div class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div> SYNCING...';
                                 setTimeout(() => {
-                                    btn.innerHTML = '🚀 Workspace Published';
+                                    confetti({
+                                        particleCount: 150,
+                                        spread: 70,
+                                        origin: { y: 0.6 },
+                                        colors: ['#3b82f6', '#8b5cf6', '#10b981']
+                                    });
+                                    btn.innerHTML = '🚀 CAMPAIGN LIVE';
                                     btn.classList.replace('from-purple-600', 'from-green-600');
                                     btn.classList.replace('to-blue-600', 'to-emerald-600');
-                                }, 2000);
+                                }, 1500);
                             }
                         }}
                         id="publish-btn"
-                        className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 transition-all text-sm font-bold shadow-xl shadow-purple-500/10 min-w-[160px] justify-center"
+                        className="flex flex-col items-center justify-center px-8 py-4 rounded-3xl bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-500 hover:to-blue-500 transition-all font-black text-xs uppercase tracking-[0.2em] shadow-2xl shadow-purple-500/20 active:scale-95"
                     >
-                        <Wand2 className="w-4 h-4" />
-                        Publish Workspace
+                        Ship Campaign
                     </button>
                 </div>
             </div>

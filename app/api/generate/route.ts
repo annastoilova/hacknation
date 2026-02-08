@@ -116,8 +116,9 @@ export async function POST(req: Request) {
                         ? `${post.imagePrompt}. Cinematic 4k video style, high motion, dynamic lighting.`
                         : `${post.imagePrompt}. Professional social media style, high quality, clean composition.`;
 
-                    console.log(`[DEBUG] Generating Gemini ${isVideo ? 'video frame' : 'image'} for prompt: ${visualPrompt}`);
+                    console.log(`[DEBUG] Attempting Gemini Generation: ${visualPrompt}`);
 
+                    // Use imagen-3 or imagen-4 based on key's capability
                     const { image } = await generateImage({
                         model: google.image('imagen-3.0-generate-001'),
                         prompt: `${visualPrompt} brand-aligned colors: ${brandProfile?.colors?.join(', ') || 'modern'}.`,
@@ -127,10 +128,39 @@ export async function POST(req: Request) {
                         imageUrl = `data:image/png;base64,${image.base64}`;
                     }
                 } catch (err: any) {
-                    console.error("[DEBUG] Gemini Visual Gen Error:", err.message || err);
+                    console.error("[DEBUG] Gemini Failed, Falling back to DALL-E 3:", err.message || err);
+
+                    // FALLBACK TO DALL-E 3
+                    try {
+                        const dallEResponse = await openai.images.generate({
+                            model: "dall-e-3",
+                            prompt: `${post.imagePrompt}. Brand style: ${brandProfile?.tone}, Colors: ${brandProfile?.colors?.join(', ')}.`,
+                            n: 1,
+                            size: "1024x1024",
+                            quality: "standard"
+                        });
+                        if (dallEResponse.data?.[0]?.url) {
+                            imageUrl = dallEResponse.data[0].url;
+                        }
+                    } catch (dalleErr: any) {
+                        console.error("[DEBUG] DALL-E 3 Fallback Failed:", dalleErr.message);
+                    }
                 }
             } else {
-                console.warn("[DEBUG] Google API Key missing, falling back to dynamic placeholder.");
+                console.warn("[DEBUG] Google API Key missing, falling back to DALL-E 3.");
+                try {
+                    const dallEResponse = await openai.images.generate({
+                        model: "dall-e-3",
+                        prompt: post.imagePrompt,
+                        n: 1,
+                        size: "1024x1024",
+                    });
+                    if (dallEResponse.data?.[0]?.url) {
+                        imageUrl = dallEResponse.data[0].url;
+                    }
+                } catch (err) {
+                    console.warn("[DEBUG] DALL-E 3 also failed, using placeholder.");
+                }
             }
 
             return {
