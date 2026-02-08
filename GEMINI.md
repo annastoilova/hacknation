@@ -38,6 +38,25 @@ Before writing a script, check `execution/` per your directive. Only create new 
 **3. Update directives as you learn**
 Directives are living documents. When you discover API constraints, better approaches, common errors, or timing expectations—update the directive. But don't create or overwrite directives without asking unless explicitly told to. Directives are your instruction set and must be preserved (and improved upon over time, not extemporaneously used and then discarded).
 
+### Image Aesthetic & Style Guidelines (Antigravity Constraints)
+
+**1. The "Authentic Lens" Rule:**
+- **Avoid:** Neon glows, plastic skin, "epic" lighting, and symmetrical perfection.
+- **Demand:** Natural lighting (golden hour, soft window light), shallow depth of field (f/1.8), and slight film grain. 
+- **Texture:** Ensure surfaces have "micro-imperfections"—dust, fabric weave, or skin pores.
+
+**2. The Color Palette (Luminous vs. Loud):**
+- Strictly follow the brand’s color DNA. 
+- Favor "Muted Professionalism": Use soft pastels, off-whites, and deep shadows rather than 100% saturation.
+
+**3. Compositional Integrity:**
+- Use the "Rule of Thirds." Avoid centering everything perfectly.
+- Create "Negative Space" for captions. The image should feel "editorial," like a spread in a premium magazine.
+
+**4. Model-Specific Keywords (Nano Banana/Veo):**
+- Always append "high-end lifestyle photography, 35mm lens, realistic textures, candid, minimalist" to the prompt.
+- Explicitly forbid "hyper-realistic," "masterpiece," or "3D render"—these keywords actually trigger the "AI slop" look.
+
 ## Self-annealing loop
 
 Errors are learning opportunities. When something breaks:
@@ -67,3 +86,44 @@ Errors are learning opportunities. When something breaks:
 You sit between human intent (directives) and deterministic execution (Python scripts). Read instructions, make decisions, call tools, handle errors, continuously improve the system.
 
 Be pragmatic. Be reliable. Self-anneal.
+
+## Image Aesthetic Guardrails
+
+**1. Authentic Lens:**
+- **Lighting:** Natural only (soft window, golden hour). No neon/cinematic glow.
+- **Optics:** 35mm, f/1.8, film grain.
+- **Texture:** "Micro-imperfections" are mandatory (pores, weave, dust).
+
+**2. Anti-Slop Blacklist:**
+- **Forbidden:** hyper-realistic, masterpiece, 8k, perfect, smooth, shiny, 3D render, trending on artstation.
+
+## Copy Aesthetic Guardrails
+
+**1. The "Human Rhythm" Rule:**
+- **Avoid:** Perfect 3-sentence paragraphs, listicles, or "rocket/native/brain" emojis.
+- **Demand:** Varied sentence lengths (short impact + long description).
+- **Constraint:** Max 1 emoji per post. Never use 🚀, 🔥, or 🧠.
+
+**2. Lowercase & Muted Tone:**
+- **Style:** Sentence case or lowercase ("creative director texting").
+- **Avoid:** ALL CAPS and excessive capitalization in headlines.
+
+**3. Cliche Blacklist:**
+- **Forbidden:** revolutionize, unleash, game-changer, dive in, harness, cutting-edge, ultimate, seamlessly, robust.
+
+## Dynamic Brand Voice
+
+**1. The Observation Phase:**
+- **Source of Truth:** Analyze user website/name for casing, vocabulary, and energy.
+- **Voice Mapping:** tech/minimalist -> lowercase/calm; fitness/startup -> sentence-case/high-energy.
+
+**2. Dynamic Persona:**
+- **Rule:** "You are a digital twin of their brand identity."
+- **Adaptation:** Mirror their casing, rhythm, and vocabulary.
+
+**3. The Mirror Test (Critic):**
+- **Vocabulary Check:** "Does this use their words? Does it use forbidden buzzwords?"
+- **Rhythm Check:** "Is this too wordy for a punchy brand?"
+- **Lume Polish:** "Is this sharp and clean?"
+
+

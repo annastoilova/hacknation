@@ -14,6 +14,14 @@ export interface BrandProfile {
     };
     values: string[];
     audience: string;
+    voiceSignature?: {
+        casing: 'lowercase' | 'sentence-case' | 'title-case';
+        sentenceLength: 'short' | 'variable' | 'long';
+        rhythm: 'punchy' | 'flowing' | 'technical';
+        energy: 'calm' | 'high' | 'neutral';
+        preferredVocabulary: string[];
+        buzzwordsToAvoid: string[];
+    };
 }
 
 export type BrandAnalysisInput = {

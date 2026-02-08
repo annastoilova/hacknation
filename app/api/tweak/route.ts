@@ -15,6 +15,13 @@ export async function POST(req: Request) {
             return NextResponse.json({ error: "Missing API Key" }, { status: 400 });
         }
 
+        // DYNAMIC VOICE LOGIC
+        const voice = brandProfile?.voiceSignature || {
+            casing: 'sentence-case',
+            rhythm: 'variable',
+            energy: 'calm'
+        };
+
         const tweakPrompt = `
             Act as a Senior Social Media Strategist for ${brandProfile?.name}.
             
@@ -25,7 +32,13 @@ export async function POST(req: Request) {
 
             User Request: "${prompt}"
 
-            Apply this request to the post while maintaining the brand's tone (${brandProfile?.tone}).
+            Apply this request while enforcing these STRICT GUARDRAILS:
+            
+            1. Dynamic Voice: Casing should be ${voice.casing}. Rhythm should be ${voice.rhythm}.
+            2. "Authentic Lens" Visuals: If changing the image, specify "35mm, f/1.8, natural light, film grain".
+            3. Anti-Slop: REMOVE words like "unleash", "elevate", "neon", "4k render".
+            4. Tone: ${brandProfile?.tone}
+            
             Refine both the caption and the imagePrompt to match the request.
 
             Respond in JSON:
@@ -52,9 +65,12 @@ export async function POST(req: Request) {
         if (googleKey) {
             try {
                 const isVideo = post.contentType === 'video';
+                const baseStyle = "high-end lifestyle photography, 35mm lens, f/1.8, natural lighting, realistic textures, slight film grain, candid, minimalist";
+                const videoStyle = "cinematic 4k, natural handheld movement, soft lighting, 35mm look";
+
                 const visualPrompt = isVideo
-                    ? `${refinedData.imagePrompt}. Cinematic 4k video style, high motion, dynamic lighting.`
-                    : `${refinedData.imagePrompt}. Professional social media style, high quality, clean composition.`;
+                    ? `${refinedData.imagePrompt}. ${videoStyle}`
+                    : `${refinedData.imagePrompt}. ${baseStyle}`;
 
                 console.log(`[TWEAK] Attempting Gemini Generation: ${visualPrompt}`);
 
