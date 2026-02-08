@@ -53,30 +53,36 @@ export async function POST(req: Request) {
 
         const initialResult = JSON.parse(generationResponse.choices[0].message.content || '{"posts":[]}');
 
-        // --- STEP 2: CRITIQUE & REFINE ---
+        // --- STEP 2: AGENTIC AUDIT & REFINE ---
         const reviewerPrompt = `
-            Act as a Senior Content Editor. Review these social media drafts and refine them for maximum impact.
-            
-            Brand Context: ${brandProfile?.name} (${brandProfile?.tone})
-            Target Intent: ${intent}
+            Act as a Senior Content Auditor for ${brandProfile?.name}. 
+            Review these social media drafts and refine them.
 
+            Brand Identity: ${brandProfile?.tone}
+            Campaign Intent: ${intent}
             Initial Drafts:
             ${JSON.stringify(initialResult.posts)}
 
-            For each post:
-            1. Critique it.
-            2. Provide a refined version.
-            3. Provide a detailed DALL-E 3 image prompt (1 sentence) that matches the post's message and the brand's aesthetic.
-            4. Keep the "critique" concise.
+            Audit Rules:
+            1. Brand Consistency: Does it sound like the specified tone?
+            2. Visual Correctness: Does the imagePrompt create a scene that builds on the text?
+            3. Engagement: Is the hook strong enough?
+
+            For each post, return:
+            - A refined version of the content.
+            - A refined imagePrompt (Visual Self-Correction).
+            - A detailed critique (Agent Thoughts).
+            - A brandMatchScore (0-100).
 
             Return JSON format:
             {
                 "refinedPosts": [
                     {
                         "platform": "platform_name",
-                        "content": "refined content",
-                        "critique": "Agent reasoning here",
-                        "imagePrompt": "Detailed visual description"
+                        "content": "refined caption",
+                        "imagePrompt": "audited visual description",
+                        "critique": "Audit findings and reasoning",
+                        "score": 95
                     }
                 ]
             }

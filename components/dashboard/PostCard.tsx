@@ -98,9 +98,17 @@ export default function PostCard({ post, onUpdate }: PostCardProps) {
                                 <div className="absolute top-0 right-0 p-2 opacity-20">
                                     <Sparkles className="w-8 h-8 text-blue-400" />
                                 </div>
-                                <div className="flex items-center gap-2 mb-2">
-                                    <Sparkles className="w-3 h-3 text-blue-400" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400/80">Agent Thoughts</span>
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex items-center gap-2">
+                                        <Sparkles className="w-3 h-3 text-blue-400" />
+                                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400/80">Agent Audit</span>
+                                    </div>
+                                    {post.score && (
+                                        <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/20">
+                                            <div className="w-1 h-1 rounded-full bg-blue-400 animate-pulse" />
+                                            <span className="text-[10px] font-bold text-blue-300">{post.score}% Match</span>
+                                        </div>
+                                    )}
                                 </div>
                                 <p className="text-[11px] leading-relaxed text-gray-400 italic font-medium relative z-10">
                                     "{post.critique}"

@@ -22,6 +22,7 @@ export interface Post {
     platform: 'linkedin' | 'instagram';
     status: 'draft' | 'approved' | 'rejected' | 'scheduled';
     critique?: string;
+    score?: number;
 }
 
 interface AppState {
