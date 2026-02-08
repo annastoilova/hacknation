@@ -22,10 +22,16 @@ export default function BrandOnboarding() {
         e.preventDefault();
         setIsLoading(true);
 
+        // Normalize URL (ensure it has a protocol)
+        let normalizedWebsite = formData.website.trim();
+        if (normalizedWebsite && !/^https?:\/\//i.test(normalizedWebsite)) {
+            normalizedWebsite = `https://${normalizedWebsite}`;
+        }
+
         // Simulate AI analyzing the brand website (mock delay)
         await new Promise(resolve => setTimeout(resolve, 1500));
 
-        setBrandProfile(formData);
+        setBrandProfile({ ...formData, website: normalizedWebsite });
         setIsLoading(false);
         router.push('/create'); // Navigate to campaign creation
     };
@@ -65,10 +71,10 @@ export default function BrandOnboarding() {
                         Website URL
                     </label>
                     <input
-                        type="url"
+                        type="text"
                         required
                         className="w-full bg-black/60 border border-white/10 rounded-xl px-4 py-4 text-white placeholder-gray-600 focus:outline-none focus:ring-1 focus:ring-purple-500/50 transition-all"
-                        placeholder="https://hack-nation.ai/"
+                        placeholder="hack-nation.ai"
                         value={formData.website}
                         onChange={(e) => setFormData({ ...formData, website: e.target.value })}
                     />
