@@ -49,16 +49,23 @@ export async function POST(req: Request) {
         let imageUrl = post.imageUrl;
         if (process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
             try {
+                const isVideo = post.contentType === 'video';
+                const visualPrompt = isVideo
+                    ? `${refinedData.imagePrompt}. Cinematic 4k video style, high motion, dynamic lighting.`
+                    : `${refinedData.imagePrompt}. Professional social media style, high quality, clean composition.`;
+
+                console.log(`[TWEAK] Generating Gemini ${isVideo ? 'video frame' : 'image'} for prompt: ${visualPrompt}`);
+
                 const { image } = await generateImage({
                     model: google.image('imagen-3.0-generate-001'),
-                    prompt: `${refinedData.imagePrompt}. Professional social media style, high quality, clean composition, brand-aligned colors: ${brandProfile?.colors?.join(', ') || 'modern'}.`,
+                    prompt: `${visualPrompt} brand-aligned colors: ${brandProfile?.colors?.join(', ') || 'modern'}.`,
                 });
 
                 if (image.base64) {
                     imageUrl = `data:image/png;base64,${image.base64}`;
                 }
             } catch (err: any) {
-                console.error("[TWEAK] Gemini Image Gen Error:", err);
+                console.error("[TWEAK] Gemini Visual Gen Error:", err);
             }
         }
 
