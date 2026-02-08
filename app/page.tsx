@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
+import Header from '@/components/Header';
 import BrandOnboarding from '@/components/brand/BrandOnboarding';
 
 export default function Home() {
@@ -20,24 +21,16 @@ export default function Home() {
 
   return (
     <div className="app-container min-h-screen flex flex-col">
-      <header className="app-header">
-        <div>
-          <h1>Lume</h1>
-          <p style={{ color: 'var(--color-primary)', fontWeight: 500 }}>Intelligent Social Studio</p>
-        </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <div style={{ width: 10, height: 10, borderRadius: '50%', background: '#2DD4BF' }}></div>
-          <span style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>System Online</span>
-        </div>
-      </header>
+      <Header />
+
 
       <main className="flex-grow flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-2xl">
           <BrandOnboarding />
 
-          <div className="mt-8 p-4 border border-dashed border-white/10 rounded-xl bg-white/5 text-sm text-center">
-            <p className="text-gray-400">
-              <strong className="text-white">Tip:</strong> The AI uses your Brand Voice settings to tailor every post.
+          <div className="mt-8 p-6 glass-effect rounded-3xl text-sm text-center">
+            <p className="text-slate-600">
+              <strong className="text-slate-900">Pro Tip:</strong> Our AI analyzes your brand URL to automatically extract your color palette and voice.
             </p>
           </div>
         </div>
@@ -45,3 +38,4 @@ export default function Home() {
     </div>
   );
 }
+

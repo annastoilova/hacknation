@@ -69,32 +69,28 @@ export default function CampaignForm() {
     };
 
     return (
-        <section className="w-full max-w-3xl glass-card p-8 rounded-3xl border border-white/10 shadow-2xl relative overflow-hidden">
-            {/* Animated background glow */}
-            <div className="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 blur-[100px] rounded-full animate-pulse" />
-            <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-purple-500/10 blur-[100px] rounded-full animate-pulse" />
-
+        <section className="w-full relative overflow-hidden">
             <div className="relative z-10">
                 <div className="flex items-center gap-3 mb-8">
-                    <div className="p-3 bg-blue-500/20 rounded-xl">
-                        <Sparkles className="w-6 h-6 text-blue-400" />
+                    <div className="p-3 bg-indigo-100 rounded-xl">
+                        <Sparkles className="w-6 h-6 text-indigo-600" />
                     </div>
                     <div>
-                        <h2 className="text-2xl font-bold text-white tracking-tight">Campaign Architect</h2>
-                        <p className="text-gray-400 text-sm">Design your next viral campaign</p>
+                        <h2 className="text-2xl font-extrabold text-slate-900 tracking-tight">Campaign Architect</h2>
+                        <p className="text-slate-600 font-medium text-sm">Design your next viral campaign</p>
                     </div>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     {/* User Intent */}
                     <div className="space-y-3">
-                        <label className="text-sm font-medium text-gray-300 ml-1">
+                        <label className="text-sm font-bold text-slate-700 ml-1">
                             What are we announcing?
                         </label>
                         <textarea
                             required
                             rows={4}
-                            className="w-full bg-black/40 border border-white/10 rounded-2xl px-5 py-4 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all resize-none shadow-inner"
+                            className="w-full glass-input rounded-2xl px-5 py-4 text-slate-900 placeholder-slate-500 transition-all resize-none"
                             placeholder="e.g. We just won 1st place at Hack-Nation 2026 with our brand new AI sync tool!"
                             value={intent}
                             onChange={(e) => setIntent(e.target.value)}
@@ -104,16 +100,16 @@ export default function CampaignForm() {
                     {/* Platform & Tone Grid */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="space-y-3">
-                            <label className="text-sm font-medium text-gray-300 ml-1">Platform</label>
-                            <div className="flex p-1 bg-black/40 border border-white/10 rounded-xl">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Platform</label>
+                            <div className="flex p-1.5 glass-input rounded-xl bg-white/20">
                                 {(['linkedin', 'instagram', 'both'] as const).map((p) => (
                                     <button
                                         key={p}
                                         type="button"
                                         onClick={() => setPlatform(p)}
-                                        className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium capitalize transition-all ${platform === p
-                                            ? 'bg-blue-600 text-white shadow-lg'
-                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        className={`flex-1 py-2 px-3 rounded-lg text-sm font-bold capitalize transition-all ${platform === p
+                                            ? 'bg-indigo-600 text-white shadow-md'
+                                            : 'bg-white/50 text-slate-600 hover:text-slate-900 hover:bg-white/70'
                                             }`}
                                     >
                                         {p}
@@ -123,16 +119,16 @@ export default function CampaignForm() {
                         </div>
 
                         <div className="space-y-3">
-                            <label className="text-sm font-medium text-gray-300 ml-1">Content Type</label>
-                            <div className="flex p-1 bg-black/40 border border-white/10 rounded-xl">
+                            <label className="text-sm font-bold text-slate-700 ml-1">Content Type</label>
+                            <div className="flex p-1.5 glass-input rounded-xl bg-white/20">
                                 {(['image', 'video'] as const).map((t) => (
                                     <button
                                         key={t}
                                         type="button"
                                         onClick={() => setContentType(t)}
-                                        className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium capitalize transition-all flex items-center justify-center gap-2 ${contentType === t
-                                            ? 'bg-blue-600 text-white shadow-lg'
-                                            : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                        className={`flex-1 py-2 px-3 rounded-lg text-sm font-extrabold capitalize transition-all flex items-center justify-center gap-2 ${contentType === t
+                                            ? 'bg-indigo-600 text-white shadow-md'
+                                            : 'bg-white/50 text-slate-600 hover:text-slate-900 hover:bg-white/70'
                                             }`}
                                     >
                                         {t === 'image' ? <Layout className="w-3.5 h-3.5" /> : <Sparkles className="w-3.5 h-3.5" />}
@@ -143,10 +139,10 @@ export default function CampaignForm() {
                         </div>
 
                         <div className="space-y-3">
-                            <label className="text-sm font-medium text-gray-300 ml-1">Brand Voice</label>
-                            <div className="w-full bg-black/40 border border-white/10 rounded-xl px-4 py-2.5 text-gray-400 flex items-center justify-between">
-                                <span className="text-sm">{brandProfile?.tone || 'Professional'}</span>
-                                <CheckCircle2 className="w-4 h-4 text-green-500" />
+                            <label className="text-sm font-bold text-slate-700 ml-1">Brand Voice</label>
+                            <div className="w-full glass-input rounded-xl px-4 py-3 text-slate-600 flex items-center justify-between">
+                                <span className="text-sm font-semibold">{brandProfile?.tone || 'Professional'}</span>
+                                <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                             </div>
                         </div>
                     </div>
@@ -155,7 +151,7 @@ export default function CampaignForm() {
                     <button
                         type="submit"
                         disabled={isGenerating || !intent}
-                        className="w-full group relative flex items-center justify-center gap-3 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-5 rounded-2xl transition-all shadow-xl hover:shadow-blue-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full group relative flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-600 to-violet-600 hover:opacity-95 text-white font-bold py-5 rounded-2xl transition-all shadow-xl hover:shadow-indigo-100 disabled:opacity-50"
                     >
                         {isGenerating ? (
                             <div className="flex items-center gap-3">
@@ -164,21 +160,13 @@ export default function CampaignForm() {
                             </div>
                         ) : (
                             <>
-                                <span>Generate Campaign</span>
+                                <span className="text-lg">Generate Campaign</span>
                                 <Send className="w-5 h-5 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
                             </>
                         )}
                     </button>
                 </form>
             </div>
-
-            <style jsx>{`
-                .glass-card {
-                    background: rgba(255, 255, 255, 0.03);
-                    backdrop-filter: blur(20px);
-                    -webkit-backdrop-filter: blur(20px);
-                }
-            `}</style>
         </section>
     );
 }
